@@ -11,7 +11,7 @@ from shutil import copyfile
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from openpyxl import formatting, styles
 
-def MainPerformance(rawdata_path, rawdata_date, debug):
+def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, debug):
     try:
         print('************ BEGIN ************')
         print()
@@ -300,6 +300,42 @@ def MainPerformance(rawdata_path, rawdata_date, debug):
                     except Exception as e:
                         print(' => Failed')
                         #print(e)    
+
+                #Process 文字時間 Markup Start   
+                try:  myUTRate=(newTotalACD+newTotalACW+newTotalRing+newTotal14)/newTotalLoginTime  
+                except Exception as e: myUTRate=9999
+
+                if withut and utrate!=0 and myUTRate<utrate:
+                    print('  -Processing UT Rate check and markup, UTRate=%s, Markup=%s' % (utrate, wordtimemarkup), end="")
+                    newTotal14=0 #Reset Total
+                    for rows in range(1, wb_sheet.max_row+1):
+                        try:
+                            LoginID = wb_sheet.cell(column=4, row=rows).value
+                            LoginName = wb_sheet.cell(column=2, row=rows).value                
+                            
+                            if table_summary_file!=None and table_summary_list!=None:                    
+                                
+                                mySummaryRow = Library.getRow(table_summary_list, LoginID)
+                                              
+                                if mySummaryRow!=None and wb_sheet.cell(column=1, row=rows).value=='AG':
+
+                                    try: 
+                                        texttime=int(float(mySummaryRow[14])*wordtimemarkup)
+                                        if (int(mySummaryRow[10])+int(mySummaryRow[11])+int(mySummaryRow[12])+texttime)>int(mySummaryRow[16]): continue
+                                        wb_sheet.cell(column=24, row=rows).value = texttime/int(mySummaryRow[16])   #文字服務/公務時間比例
+                                        newTotal14 += texttime #文字服務
+                                        wb_sheet.cell(column=24, row=3).value = newTotal14/newTotalLoginTime   #文字服務/公務時間比例
+                                    except Exception as e:
+                                        #print(e)  
+                                        wb_sheet.cell(column=24, row=rows).value = 0
+                                    
+                                    #End TotalLogin Process...
+                        
+                        except Exception as e:
+                            print(' => Failed')
+                            #print(e)  
+                    print(' => Completed')
+                #Process 文字時間 Markup End
 
             #改數值格式後不用計算
             #if TotalLogin>0 and TotalACD>0:

@@ -1,1 +1,2 @@
 App\Python\Scripts\pyinstaller Main.py -F --icon=Taurus.ico
+git push -u origin master

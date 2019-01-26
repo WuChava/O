@@ -40,7 +40,7 @@ def getRowMerge(table, loginID):
         #print(e)
         return None
 
-def getSetting(section, field, checkpath, convertdate):
+def getSetting(section, field, checkpath, convertdate, checkfloat):
     try:
         config = configparser.ConfigParser()
         config.read('Settings.ini', encoding='ANSI')
@@ -55,6 +55,7 @@ def getSetting(section, field, checkpath, convertdate):
                     else: result=None
                 #if checkpath and not os.path.isdir(result): result=None
             if convertdate: result=datetime.datetime.strptime(result, "%Y/%m/%d").date()
+            if checkfloat: result=float(result)
         return result
     except Exception as e:
         #print(e)        
