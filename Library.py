@@ -351,6 +351,21 @@ def getCsvFile2(file, filesecond, conditions):
             #print(e)
     return None, None
 
+def getFilePath(file, filesecond):
+    for times in range(0, 2):
+        try:
+            if times==0: myFile=file 
+            else: myFile=filesecond
+            if myFile==None: continue
+            
+            for filename in glob.iglob(myFile, recursive=True):             
+                return filename
+        
+        except Exception as e:
+            return None
+            #print(e)
+    return None
+
 def getSurveyCount(surveyList, loginID):
     TotalSurveyNo1=0
     TotalSurveyNo1Ans=0

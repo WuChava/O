@@ -4,12 +4,15 @@ from openpyxl import load_workbook
 import csv
 import datetime
 import re
-import os.path
+import os.path, os
 import glob
 import Library
 from shutil import copyfile
 from openpyxl.formatting.rule import ColorScaleRule, CellIsRule, FormulaRule
 from openpyxl import formatting, styles
+from datetime import timedelta
+from win32com.client import Dispatch
+import shutil
 
 def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, debug):
     try:
@@ -380,7 +383,71 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
 
         except Exception as e:
             print('  -Loading file: => Failed ')
-            print(e)
+            #print(e)
+
+        try:
+            print()
+            print('Step 4: Generating Monthly Report')
+
+
+            file_report_date=ReportDate
+            file_report_firstdate=file_report_date.replace(day=1)
+            file_report_currentdate=file_report_date
+
+            Performance_FilePathName = "Report\OPPO_Agent_Performance%s_全月.xlsx" % ReportDateSimple
+            Performance_FilePathName_Full=os.path.abspath(Performance_FilePathName)
+            if os.path.isfile(wb_file_name):
+                shutil.copy2(wb_file_name, Performance_FilePathName)
+
+            xl = Dispatch("Excel.Application")
+            xl.Visible = False
+            xl.DisplayAlerts = False
+            while (file_report_currentdate>=file_report_firstdate):
+                MonthlyReportDateSimpleArr = str(file_report_currentdate).split(' ',1)[0].split('-',2)
+                MonthlyReportDateSimple = MonthlyReportDateSimpleArr[1]+MonthlyReportDateSimpleArr[2]
+                source=Library.getFilePath('Z:\報表資料-勿刪除\**\OPPO_Agent_Performance%s.xlsx' % MonthlyReportDateSimple, 'Report\RAWDATA\**\OPPO_Agent_Performance%s.xlsx'  % MonthlyReportDateSimple)
+                print('  -Loading Date=%s, File=%s' % (MonthlyReportDateSimple,source), end="")
+                if source!=None:
+                    wb1 = xl.Workbooks.Open(Filename=source)
+                    wb2 = xl.Workbooks.Open(Filename=Performance_FilePathName_Full)
+                    ws1 = wb1.Worksheets(1)
+                    ws1.Copy(Before=wb2.Worksheets(1))
+                    wb2.Close(SaveChanges=True)
+                    wb2=None
+                    wb1.Close(SaveChanges=False)
+                    wb1=None
+
+                file_report_currentdate=file_report_currentdate - timedelta(days=1)
+                print(' => Completed')
+
+            wb2 = xl.Workbooks.Open(Filename=Performance_FilePathName_Full)
+            try: 
+                wb2_sheet = wb2.Sheets("SOP")
+                wb2_sheet.Delete()
+            except: pass
+            try:
+                wb2_sheet = wb2.Sheets("Performance")
+                wb2_sheet.Delete()
+            except: pass
+            try: 
+                wb2_sheet = wb2.Sheets("分時表")
+                wb2_sheet.Delete()
+            except: pass
+            try: 
+                wb2_sheet = wb2.Sheets("問題解決率")
+                wb2_sheet.Delete()
+            except: pass
+
+            wb2.Close(SaveChanges=True)
+            wb2=None
+
+            xl.Quit()
+            xl = None
+
+        except Exception as e:
+            print(' => Failed ')
+            #print(e)
+
     #except Exception as e:
     #    print(e)
     except Exception as e:
