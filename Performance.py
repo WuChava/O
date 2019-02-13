@@ -405,7 +405,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
             while (file_report_currentdate>=file_report_firstdate):
                 MonthlyReportDateSimpleArr = str(file_report_currentdate).split(' ',1)[0].split('-',2)
                 MonthlyReportDateSimple = MonthlyReportDateSimpleArr[1]+MonthlyReportDateSimpleArr[2]
-                source=Library.getFilePath('Z:\報表資料-勿刪除\**\OPPO_Agent_Performance%s.xlsx' % MonthlyReportDateSimple, 'Report\RAWDATA\**\OPPO_Agent_Performance%s.xlsx'  % MonthlyReportDateSimple)
+                source=Library.getFilePath(rawdata_path+'\**\OPPO_Agent_Performance%s.xlsx' % MonthlyReportDateSimple, 'Report\RAWDATA\**\OPPO_Agent_Performance%s.xlsx'  % MonthlyReportDateSimple)
                 print('  -Loading Date=%s, File=%s' % (MonthlyReportDateSimple,source), end="")
                 if source!=None:
                     wb1 = xl.Workbooks.Open(Filename=source)
