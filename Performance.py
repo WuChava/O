@@ -70,7 +70,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
             print('  -Loading file:', end="")
             try:
                 table_mail_file_name='MAIL'                
-                table_mail_file, table_mail_sheet=Library.getXlsxFile2(rawdata_path + '\**\*%s*.xlsx' % table_mail_file_name if rawdata_path!=None else None, 'Report\RAWDATA\**\*%s*.xlsx' % table_mail_file_name, [['Str', 2, 'Closed'], ['DateStr', 4, ReportDateStr]])
+                table_mail_file, table_mail_sheet=Library.getXlsxFile2(rawdata_path + '\**\%s*.xlsx' % table_mail_file_name if rawdata_path!=None else None, 'Report\RAWDATA\**\*%s*.xlsx' % table_mail_file_name, [['Str', 2, 'Closed'], ['DateStr', 4, ReportDateStr]])
                 if table_mail_file!=None: print(' %s => Completed' % table_mail_file)
                 else: print(' Finding "%s\" => Failed' % table_mail_file_name)
             except Exception as e:
@@ -161,7 +161,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
                 for rows in range(1, wb_sheet.max_row+1):
                     try:
                         LoginID = wb_sheet.cell(column=4, row=rows).value
-                        LoginName = wb_sheet.cell(column=2, row=rows).value                
+                        LoginName = wb_sheet.cell(column=2, row=rows).value           
                         
                         if table_summary_file!=None and table_summary_list!=None:                    
                             

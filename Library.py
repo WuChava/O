@@ -11,14 +11,22 @@ import urllib3
 from openpyxl.styles import Font
 
 def getRow(table, loginID):
-    myloginID = str(loginID)
-    if len(myloginID)==7:
-        myloginID = 'A'+myloginID
     for i in table:
-        if i[0]==myloginID:
+        if formatLoginID(i[0])==formatLoginID(loginID):
         #if i[0][-7:]==str(myloginID):
             return i
     return None
+
+def formatLoginID(loginID):
+    
+    try:
+        myloginID = str(loginID)
+        if len(myloginID)==7:
+            myloginID = 'A'+myloginID
+        return myloginID
+    except Exception as e:
+        #print(e)
+        return loginID
 
 def getRowMerge(table, loginID):
     myloginID = str(loginID)
@@ -333,17 +341,20 @@ def getCsvFile2(file, filesecond, conditions):
             else: myFile=filesecond
             if myFile==None: continue
             
-            for filename in glob.iglob(myFile, recursive=True):                
-                myTable = csv.reader(open(filename, 'r',encoding='ANSI'), delimiter='\t')
-                myTable_list = list(myTable) if myTable!=None else None
-                if len(conditions)==0: return filename, myTable_list
-                myFlag=0
-                for conditon in conditions:
-                    if myTable_list[conditon[1]][conditon[0]]==conditon[2]: myFlag=1
-                    else: 
-                        myFlag=0
-                        break
-                if myFlag: return filename, myTable_list
+            for filename in glob.iglob(myFile, recursive=True):       
+                try:         
+                    myTable = csv.reader(open(filename, 'r',encoding='ANSI'), delimiter='\t')
+                    myTable_list = list(myTable) if myTable!=None else None
+                    if len(conditions)==0: return filename, myTable_list
+                    myFlag=0
+                    for conditon in conditions:
+                        if myTable_list[conditon[1]][conditon[0]]==conditon[2]: myFlag=1
+                        else: 
+                            myFlag=0
+                            break
+                    if myFlag: return filename, myTable_list
+                except Exception as e:
+                    pass
         
         except Exception as e:
             if times==0: myTable_list=None
@@ -405,22 +416,25 @@ def getXlsxFile2(file, filesecond, conditions):
             else: myFile=filesecond
             if myFile==None: continue
             for filename in glob.iglob(myFile, recursive=True):
-                table = load_workbook(filename = filename) 
-                table_sheet = table[table.sheetnames[0]]                
-                if len(conditions)==0: return filename, table_sheet
-                for rows in range(2, table_sheet.max_row+1):                   
-                    myFlag = 0                
-                    for myCondition in conditions:
-                        if myCondition[0] == 'DateStr' and convertDate(myCondition[2]) == convertDate(table_sheet.cell(column=myCondition[1], row=rows).value):
-                            myFlag = 1
-                        elif myCondition[0] == 'Str' and myCondition[2] == table_sheet.cell(column=myCondition[1], row=rows).value:
-                            myFlag = 1
-                        else:
-                            myFlag = 0
-                    if myFlag:
-                        table.close()
-                        return filename, table_sheet                
-                table.close()
+                try:
+                    table = load_workbook(filename = filename) 
+                    table_sheet = table[table.sheetnames[0]]                
+                    if len(conditions)==0: return filename, table_sheet
+                    for rows in range(2, table_sheet.max_row+1):                   
+                        myFlag = 0                
+                        for myCondition in conditions:
+                            if myCondition[0] == 'DateStr' and convertDate(myCondition[2]) == convertDate(table_sheet.cell(column=myCondition[1], row=rows).value):
+                                myFlag = 1
+                            elif myCondition[0] == 'Str' and myCondition[2] == table_sheet.cell(column=myCondition[1], row=rows).value:
+                                myFlag = 1
+                            else:
+                                myFlag = 0
+                        if myFlag:
+                            table.close()
+                            return filename, table_sheet                
+                    table.close()
+                except Exception as e:
+                    pass
         except Exception as e:
             #print(e)
             #print(e.code)
