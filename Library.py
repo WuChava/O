@@ -11,8 +11,10 @@ import urllib3
 from openpyxl.styles import Font
 
 def getRow(table, loginID):
+    myLoginId=formatLoginID(loginID)
+    myLoginIdLen=len(formatLoginID(loginID))
     for i in table:
-        if formatLoginID(i[0])==formatLoginID(loginID):
+        if formatLoginID(i[0])[:myLoginIdLen]==myLoginId:
         #if i[0][-7:]==str(myloginID):
             return i
     return None
@@ -35,9 +37,11 @@ def getRowMerge(table, loginID):
     myTable=None
     myStart=None
     first=0
+
+    myLoginIdLen=len(myloginID)
     try:
         for i in table:        
-            if i[0]==myloginID:
+            if i[0][:myLoginIdLen]==myloginID:
                 if first==0: myStart=i[3]
                 first=1
                 myTable=i

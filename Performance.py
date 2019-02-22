@@ -166,6 +166,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
                         if table_summary_file!=None and table_summary_list!=None:                    
                             
                             mySummaryRow = Library.getRow(table_summary_list, LoginID)
+                            if mySummaryRow==None: mySummaryRow = Library.getRow(table_summary_list, LoginName)
                                                 
                             #Process Summary Table
                             if mySummaryRow!=None: print('  -Loading LoginID = %s'  % LoginID, end="")
@@ -229,6 +230,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
                         #Process Loginout Table
                         if table_loginout_file!=None:
                             myLoginoutRow = Library.getRowMerge(table_loginout_list, LoginID)
+                            if myLoginoutRow==None: myLoginoutRow = Library.getRowMerge(table_loginout_list, LoginName)
                             if myLoginoutRow!=None and wb_sheet.cell(column=1, row=rows).value=='AG':
                                 #print(myLoginoutRow)
                                 LoginSec = Library.getSec(myLoginoutRow[3])
