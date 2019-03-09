@@ -321,6 +321,7 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
                             if table_summary_file!=None and table_summary_list!=None:                    
                                 
                                 mySummaryRow = Library.getRow(table_summary_list, LoginID)
+                                if mySummaryRow==None: mySummaryRow = Library.getRow(table_summary_list, LoginName)
                                               
                                 if mySummaryRow!=None and wb_sheet.cell(column=1, row=rows).value=='AG':
 
