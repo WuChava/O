@@ -67,14 +67,16 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
 
             
             #2.import data source
-            print('  -Loading file:', end="")
-            try:
-                table_mail_file_name='MAIL'                
-                table_mail_file, table_mail_sheet=Library.getXlsxFile2(rawdata_path + '\**\%s*.xlsx' % table_mail_file_name if rawdata_path!=None else None, 'Report\RAWDATA\**\*%s*.xlsx' % table_mail_file_name, [['Str', 2, 'Closed'], ['DateStr', 4, ReportDateStr]])
-                if table_mail_file!=None: print(' %s => Completed' % table_mail_file)
-                else: print(' Finding "%s\" => Failed' % table_mail_file_name)
-            except Exception as e:
-                pass
+            #20190504 Phaseout for this source>>
+            #print('  -Loading file:', end="")
+            #try:
+            #    table_mail_file_name='MAIL'                
+            #    table_mail_file, table_mail_sheet=Library.getXlsxFile2(rawdata_path + '\**\%s*.xlsx' % table_mail_file_name if rawdata_path!=None else None, 'Report\RAWDATA\**\*%s*.xlsx' % table_mail_file_name, [['Str', 2, 'Closed'], ['DateStr', 4, ReportDateStr]])
+            #    if table_mail_file!=None: print(' %s => Completed' % table_mail_file)
+            #    else: print(' Finding "%s\" => Failed' % table_mail_file_name)
+            #except Exception as e:
+            #    pass
+            #20190504 Phaseout for this source<<
 
             #2.import data source
             print('  -Loading file:', end="")
@@ -254,14 +256,23 @@ def MainPerformance(rawdata_path, rawdata_date, withut, utrate, wordtimemarkup, 
 
                         #Process Mail Table
                         TotalPaperCounter = 0
-                        if rows>3 and table_mail_file!=None:
-                            myMailCounter = Library.getMailCount(table_mail_sheet, LoginName, ReportDateStr)                    
-                            if myMailCounter!=None and myMailCounter>0:
-                                wb_sheet.cell(column=19, row=rows).value = myMailCounter
-                                TotalPaperCounter += myMailCounter   
+                        #20190504 Phaseout for this source>>
+                        #if rows>3 and table_mail_file!=None:
+                        #    myMailCounter = Library.getMailCount(table_mail_sheet, LoginName, ReportDateStr)                    
+                        #    if myMailCounter!=None and myMailCounter>0:
+                        #        wb_sheet.cell(column=19, row=rows).value = myMailCounter
+                        #        TotalPaperCounter += myMailCounter   
+                        #20190504 Phaseout for this source>>
 
                         #Process Cts Table
                         if rows>3 and table_cts_file!=None:
+                            #20190504 Got it from CTS>>
+                            myMailCounter = Library.getCtsCount(table_cts_sheet, LoginName, ReportDateStr, 'email')
+                            if myMailCounter!=None and myMailCounter>0:
+                                wb_sheet.cell(column=19, row=rows).value = myMailCounter
+                                TotalPaperCounter += myMailCounter
+                            #20190504 Got it from CTS<<
+
                             myFacebookCounter = Library.getCtsCount(table_cts_sheet, LoginName, ReportDateStr, 'Facebook')
                             if myFacebookCounter!=None and myFacebookCounter>0:
                                 wb_sheet.cell(column=20, row=rows).value = myFacebookCounter
